@@ -1,0 +1,8 @@
+{
+	global:
+		nouveau_drm_screen_create;
+		__driDriverGetExtensions_foo;
+		vdp_imp_device_create_x11;
+	local:
+		*;
+};

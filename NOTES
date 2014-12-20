@@ -1,0 +1,29 @@
+Weak symbols work only if:
+
+1. The module containing the symbol(s) is opened first.
+2. And it's dlopened with RTLD_GLOBAL
+
+Dynamic list works _regardless_ of RTLD_GLOBAL/LOCAL
+
+We might get away with 2, but not with 1 :'(
+
+Currently we've defined an interface (ABI only?), which is _very_ likely to crash cause problems.
+I.e. change anything in the driver, and use "missmatched" dri vs vdpau - BOOOOM.
+
+Alternative solutions:
+ - Copy X/Y from DRI to vdpau and/or back, bu SYNC comes into play:
+   - Hope no-one wants them in sync ?
+   - Maarten's WW work ?
+   - Other way to syncing them ?
+   - Performance impact might be significant, or at least noticable.
+ - Rework things - libdrm/kernel level, so that one can
+   - Redo the ctx (and everything that we've already drawn) is the interop happens
+   - 
+ - Check what the blob does :-) Here is some guesswork
+   - Same thing as us - exposes ABI/API between GL and VDPAU
+   - Greates a separate GL thread (yet same ctx?) for VDPAU, and uses some mangling ?
+   - Does not create any GL thread and no ctx. Hmm I might need some sleep this sounds stupid.
+ 
+
+Quick "fix":
+ - Add a version check and bail out. Version check ? More like a sha one, _regardless_ if we're doing release/debug/from git/from tarball or not build.
